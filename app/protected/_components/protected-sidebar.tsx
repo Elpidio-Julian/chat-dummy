@@ -3,6 +3,15 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import { Database } from '@/types/supabase'
 import WorkspaceSwitchButton from './workspace-switch-button'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from '@/components/ui/sidebar'
 
 interface ProtectedSidebarProps {
   params?: { workspaceId?: string }
@@ -12,7 +21,7 @@ export default async function ProtectedSidebar({ params }: ProtectedSidebarProps
   const { workspaceId } = params || {}
 
   // Create a Supabase server client
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Get the current user
   const {
@@ -22,9 +31,20 @@ export default async function ProtectedSidebar({ params }: ProtectedSidebarProps
 
   if (!user || userError) {
     return (
-      <aside className="w-64 bg-white border-r h-screen flex flex-col">
-        <div className="p-4 border-b">You must be logged in.</div>
-      </aside>
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Authentication</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <div className="p-4">You must be logged in.</div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
     )
   }
 
@@ -37,15 +57,23 @@ export default async function ProtectedSidebar({ params }: ProtectedSidebarProps
   // If user has no memberships or an error occurred
   if (membershipError || !memberships || memberships.length === 0) {
     return (
-      <aside className="w-64 bg-white border-r h-screen flex flex-col">
-        <div className="p-4 border-b">
-          <p>No workspaces found.</p>
-          {/* 
-            Optionally give them a button to open Workspace Switch or prompt to create 
-          */}
-          <WorkspaceSwitchButton />
-        </div>
-      </aside>
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <div className="p-4">
+                    <p>No workspaces found.</p>
+                    <WorkspaceSwitchButton />
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
     )
   }
 
@@ -64,27 +92,49 @@ export default async function ProtectedSidebar({ params }: ProtectedSidebarProps
   }
 
   return (
-    <aside className="w-64 bg-white border-r h-screen flex flex-col">
-      <div className="p-4 border-b">
-        <WorkspaceSwitchButton />
-      </div>
-      <nav className="flex-1 overflow-y-auto p-4">
-        {workspaceId ? (
-          channels.length ? (
-            <ul>
-              {channels.map((ch) => (
-                <li key={ch.id}>
-                  {ch.name}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No channels in this workspace yet.</p>
-          )
-        ) : (
-          <p>Please select a workspace.</p>
-        )}
-      </nav>
-    </aside>
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <WorkspaceSwitchButton />
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Channels</SidebarGroupLabel>
+          <SidebarMenu>
+            {workspaceId ? (
+              channels.length ? (
+                channels.map((ch) => (
+                  <SidebarMenuItem key={ch.id}>
+                    <SidebarMenuButton asChild>
+                      <a href={`/workspace/${workspaceId}/channel/${ch.id}`}>
+                        {ch.name}
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              ) : (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <div className="p-4">No channels in this workspace yet.</div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            ) : (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <div className="p-4">Please select a workspace.</div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   )
 }
