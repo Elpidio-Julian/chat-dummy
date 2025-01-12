@@ -23,7 +23,19 @@ import {
 } from "@/components/ui/sidebar"
 import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
 
-export default function AppSidebar() {
+
+export default function AppSidebar({
+  createWorkspace,
+  workspaces = [],
+  currentWorkspace = { id: '', name: 'No Workspace Selected' },
+  channels = [],
+  directMessages = [],
+}: {
+  workspaces?: { id: string, name: string }[];
+  currentWorkspace?: { id: string, name: string };
+  channels?: { id: string, name: string }[];
+  directMessages?: { id: string, name: string }[];
+}) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -32,24 +44,28 @@ export default function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg" className="w-full justify-between">
-                  Current Workspace
+                  {currentWorkspace.name}
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Workspace 1
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Workspace 2
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Workspace 3
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                {workspaces.length > 0 ? (
+                  <>
+                    {workspaces.map((workspace) => (
+                      <DropdownMenuItem key={workspace.id}>
+                        {workspace.name}
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                  </>
+                ) : (
+                  <DropdownMenuItem disabled>
+                    No workspaces available
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onSelect={createWorkspace}>
                   <Plus className="mr-2 h-4 w-4" />
                   Create a workspace
                 </DropdownMenuItem>
@@ -63,37 +79,52 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Channels</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <Hash className="mr-2 h-4 w-4" />
-                  general
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <Hash className="mr-2 h-4 w-4" />
-                  random
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {channels.length > 0 ? (
+                channels.map((channel) => (
+                  <SidebarMenuItem key={channel.id}>
+                    <SidebarMenuButton>
+                      <Hash className="mr-2 h-4 w-4" />
+                      {channel.name}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              ) : (
+                <SidebarMenuItem>
+                  <SidebarMenuButton disabled>
+                    <Hash className="mr-2 h-4 w-4" />
+                    No channels available
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Direct Messages</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            Direct Messages
+            <button className="ml-auto hover:bg-accent hover:text-accent-foreground rounded-sm p-1">
+              <Plus className="h-4 w-4" />
+            </button>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  user1
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  user2
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {directMessages.length > 0 ? (
+                directMessages.map((directMessage) => (
+                  <SidebarMenuItem key={directMessage.id}>
+                    <SidebarMenuButton>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      {directMessage.name}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              ) : (
+                <SidebarMenuItem>
+                  <SidebarMenuButton disabled>
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    No direct messages available
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

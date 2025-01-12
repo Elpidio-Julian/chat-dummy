@@ -4,6 +4,7 @@ import Link from "next/link";
 import AppSidebar from "@/components/sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import Header from "@/components/header";
+import { createWorkspace } from "@/components/actions/create-workspace";
 
 export default async function WorkspacePage() {
   const supabase = await createClient();
@@ -21,6 +22,7 @@ export default async function WorkspacePage() {
     .select('workspace_id')
     .eq('user_id', user.id)
 
+  
   if (workspacesError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
