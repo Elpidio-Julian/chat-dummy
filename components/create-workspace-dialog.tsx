@@ -1,5 +1,7 @@
 'use client';
 
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -15,16 +17,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { FormMessage, type Message } from './form-message';
+import { createWorkspace } from '@/app/protected/_components/create-workspace';
+import { useEffect } from 'react';
 
-interface CreateWorkspaceDialogProps {
-  onSubmit: (name: string) => Promise<void>;
-}
-
-export function CreateWorkspaceDialog({ onSubmit }: CreateWorkspaceDialogProps) {
+export function CreateWorkspaceDialog() {
+  const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [message, setMessage] = useState<Message | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    async function getUser() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        redirect('/sign-in');
+        return;
+      }
+      setUser(user);
+    }
+    getUser();
+  }, [supabase.auth]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,7 +47,7 @@ export function CreateWorkspaceDialog({ onSubmit }: CreateWorkspaceDialogProps) 
     setMessage(null);
 
     try {
-      await onSubmit(name);
+      await createWorkspace(name, user.id);
       setOpen(false);
       setName('');
     } catch (error) {

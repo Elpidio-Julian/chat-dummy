@@ -4,9 +4,11 @@ import { createClient } from '@/utils/supabase/server'
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (error || !data?.user) {
+// Get current user
+const { data: { user }, error: userError } = await supabase.auth.getUser();
+  
+if (userError || !user) {
     redirect('/sign-in');
   } else {
     redirect('/protected/workspace');

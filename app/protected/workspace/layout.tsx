@@ -1,10 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Header from '@/components/header'
-import AppSidebar from '@/components/sidebar'
-import ChatView from '@/components/chat-view'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
-import AuthHeader from '@/components/auth-header'
 
 export default async function WorkspaceLayout({
   children,

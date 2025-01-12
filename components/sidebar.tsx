@@ -25,13 +25,11 @@ import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 
 export default function AppSidebar({
-  createWorkspace,
   workspaces = [],
   currentWorkspace = { id: '', name: 'No Workspace Selected' },
   channels = [],
   directMessages = [],
 }: {
-  createWorkspace: (name: string, user_id: string) => Promise<void>;
   workspaces?: { id: string, name: string }[];
   currentWorkspace?: { id: string, name: string };
   channels?: { id: string, name: string }[];
@@ -41,7 +39,7 @@ export default function AppSidebar({
 
 
   return (
-    <Sidebar>
+    <Sidebar  className="w-64 flex-shrink-0">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

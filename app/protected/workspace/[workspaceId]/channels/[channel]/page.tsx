@@ -3,18 +3,16 @@ import { notFound } from "next/navigation";
 import MessageInput from "@/app/protected/_components/message-input";
 import MessagesList from "@/app/protected/_components/messages-list";
 
-export default async function ChannelPage({
-  params,
-}: {
-  params: { workspaceId: string; channelId: string };
-}) {
+export default async function ChannelPage({ params }: { params: Promise<{ workspaceId: string, channel: string }> }) {
+
   const supabase = await createClient();
+  const { workspaceId, channel } = await params;
 
   // 1. Validate the channel belongs to the given workspace
   const { data: channelData, error: channelError } = await supabase
     .from("channels")
     .select("id, name")
-    .match({ id: params.channelId, workspace_id: params.workspaceId })
+    .match({ id: channel, workspace_id: workspaceId })
     .single();
 
   if (!channelData || channelError) {

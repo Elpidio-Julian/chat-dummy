@@ -5,7 +5,7 @@ import AppSidebar from "@/components/sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import Header from "@/components/header";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
-
+import { createWorkspace } from "@/app/protected/_components/create-workspace";
 
 export default async function WorkspacePage() {
   const supabase = await createClient();
@@ -22,7 +22,7 @@ export default async function WorkspacePage() {
     .from('workspace_members')
     .select('workspace_id')
     .eq('user_id', user.id)
-
+  console.log(workspaces, 'workspaces');
   
   if (workspacesError) {
     return (
@@ -35,13 +35,13 @@ export default async function WorkspacePage() {
 
   // If user has a workspace, redirect to the first one
   if (workspaces && workspaces.length > 0) {
-    redirect(`/protected/workspace/${workspaces[0].id}`);
+    redirect(`/protected/workspace/${workspaces[0]}`);
   }
 
   // If no workspaces, show create workspace UI
   return (
     <>
-      <AppSidebar className="w-64 flex-shrink-0" />
+      <AppSidebar  />
       <div className="flex flex-1 overflow-hidden">
         <SidebarInset>
           <Header name="No Workspace yet" />

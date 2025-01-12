@@ -1,13 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 
-export default async function WorkspacePage({
-  params,
-}: {
-  params: { workspaceId: string };
-}) {
-  const supabase = await createClient();
 
+
+export default async function WorkspacePage({ params }: { params: Promise<{ workspaceId: string }> }) {
+  const supabase = await createClient();
+  const { workspaceId } = await params;
   // Get current user
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   
@@ -20,7 +18,7 @@ export default async function WorkspacePage({
     .from('workspace_members')
     .select('workspace_id')
     .match({ 
-      workspace_id: params.workspaceId,
+      workspace_id: workspaceId,
       user_id: user.id 
     })
     .single();
@@ -33,7 +31,7 @@ export default async function WorkspacePage({
   const { data: channel, error: channelError } = await supabase
     .from('channels')
     .select('id')
-    .eq('workspace_id', params.workspaceId)
+    .eq('workspace_id', workspaceId)
     .order('created_at', { ascending: true })
     .limit(1)
     .single();
@@ -48,5 +46,5 @@ export default async function WorkspacePage({
   }
 
   // Redirect to first channel
-  redirect(`/protected/workspace/${params.workspaceId}/channels/${channel.id}`);
+  redirect(`/protected/workspace/${workspaceId}/channels/${channel.id}`);
 }
