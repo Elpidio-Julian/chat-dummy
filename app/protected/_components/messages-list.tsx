@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/client";
 
 // Adjust fields to match your messages table columns
 interface Message {
@@ -19,7 +19,7 @@ export default function MessagesList({
   channelId: string;
   initialMessages: Message[];
 }) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
   useEffect(() => {

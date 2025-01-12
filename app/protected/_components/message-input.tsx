@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/client";
 
 /**
  * Client Component:
  * Handles user input for sending new messages to a channel.
  */
 export default function MessageInput({ channelId }: { channelId: string }) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [content, setContent] = useState("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
