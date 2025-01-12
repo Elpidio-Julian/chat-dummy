@@ -22,6 +22,9 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 
 export default function AppSidebar({
@@ -36,6 +39,9 @@ export default function AppSidebar({
   channels?: { id: string, name: string }[];
   directMessages?: { id: string, name: string }[];
 }) {
+
+
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -65,9 +71,34 @@ export default function AppSidebar({
                     No workspaces available
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onSelect={createWorkspace}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create a workspace
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                    <Button variant="outline" >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create a workspace
+                    </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create a workspace</DialogTitle>
+          <DialogDescription>
+            Enter a name for your new workspace.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Workspace Name
+            </Label>
+            <Input id="name" defaultValue="Pedro Duarte" className="col-span-3" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit">Create Workspace</Button>
+        </DialogFooter>
+      </DialogContent>
+                  </Dialog>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
