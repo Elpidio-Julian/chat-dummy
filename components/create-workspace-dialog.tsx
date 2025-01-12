@@ -47,7 +47,7 @@ export function CreateWorkspaceDialog() {
     setMessage(null);
 
     try {
-      await createWorkspace(name, user.id);
+      await createWorkspace(name, user);
       setOpen(false);
       setName('');
     } catch (error) {
@@ -89,7 +89,7 @@ export function CreateWorkspaceDialog() {
             {message && <FormMessage message={message} />}
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" onSubmit={handleSubmit} disabled={isLoading}>
               {isLoading ? 'Creating...' : 'Create Workspace'}
             </Button>
           </DialogFooter>

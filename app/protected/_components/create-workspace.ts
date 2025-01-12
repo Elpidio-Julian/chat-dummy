@@ -3,48 +3,32 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function createWorkspace(name: string, userId: string) {
+interface User {
+  id: string;
+  aud: string;
+  role: string;
+  email: string;
+  email_confirmed_at: string;
+  user_metadata: object;
+  last_sign_in_at: string;
+  app_metadata: object;
+  created_at: string;
+  updated_at: string;
+  is_anonymous: boolean;
+}
+
+export async function createWorkspace(name: string, user: User) {
   const supabase = await createClient();
 
-  // Create the workspace
+  // Create the workspace 
   const { data: workspace, error: workspaceError } = await supabase
     .from('workspaces')
-    .insert([{ name }])
+    .insert([{ name, created_by: user.id }])
     .select()
     .single();
 
   if (workspaceError) {
     throw new Error(`Failed to create workspace: ${workspaceError.message}`);
-  }
-
-  // Add the creator as a member
-  const { error: memberError } = await supabase
-    .from('workspace_members')
-    .insert([{
-      workspace_id: workspace.id,
-      user_id: userId,
-      role: 'admin'
-    }]);
-
-  if (memberError) {
-    // Cleanup the workspace if member creation fails
-    await supabase.from('workspaces').delete().eq('id', workspace.id);
-    throw new Error(`Failed to add member to workspace: ${memberError.message}`);
-  }
-
-  // Create a default "general" channel
-  const { error: channelError } = await supabase
-    .from('channels')
-    .insert([{
-      name: 'general',
-      workspace_id: workspace.id
-    }]);
-
-  if (channelError) {
-    // Cleanup everything if channel creation fails
-    await supabase.from('workspace_members').delete().eq('workspace_id', workspace.id);
-    await supabase.from('workspaces').delete().eq('id', workspace.id);
-    throw new Error(`Failed to create default channel: ${channelError.message}`);
   }
 
   revalidatePath('/protected/workspace');
