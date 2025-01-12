@@ -4,7 +4,8 @@ import Link from "next/link";
 import AppSidebar from "@/components/sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import Header from "@/components/header";
-import { createWorkspace } from "@/components/actions/create-workspace";
+import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
+
 
 export default async function WorkspacePage() {
   const supabase = await createClient();
@@ -49,12 +50,7 @@ export default async function WorkspacePage() {
             <p className="text-muted-foreground text-center max-w-md">
         You don't have any workspaces yet. Create your first workspace to get started.
             </p>
-            <Link 
-              href="/protected/workspace/new" 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
-             >
-              Create Workspace
-            </Link>
+            <CreateWorkspaceDialog />
          </div>    
         </SidebarInset>
       </div>
