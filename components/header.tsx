@@ -17,7 +17,7 @@ export default function Header({ name = "Workspace Name" }: { name?: string }) {
   
   return (
     <header className="flex items-center justify-between border-b px-6 py-2">
-      <h1 className="text-lg font-semibold">{currentWorkspace?.name || 'No workspace selected'}</h1>
+      <h1 className="text-lg font-semibold">{currentWorkspace?.workspaces?.name || 'No workspace selected'}</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 rounded-full">

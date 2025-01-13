@@ -7,14 +7,14 @@ export default async function WorkspacePage({ params }: { params: Promise<{ work
   const supabase = await createClient();
   const { workspaceId } = await params;
   // Get current user
-  const { data:  user , userError } = await supabase.auth.getUser();
+  const { data:  user, error: userError } = await supabase.auth.getUser();
   
   if (userError || !user) {
     redirect('/sign-in');
   }
   
 
-  const { channels, ChannelError } = await getWorkspaceChannels(workspaceId);
+  const { channels, error: ChannelError } = await getWorkspaceChannels(workspaceId);
 
   if (ChannelError) {
     console.log(ChannelError);

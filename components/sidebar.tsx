@@ -36,7 +36,7 @@ export default function AppSidebar({
   const workspaceId = params?.workspaceId as string
   
   const { 
-    workspaces, 
+    workspaceData, 
     currentWorkspace, 
     isLoading,
     error,
@@ -44,18 +44,21 @@ export default function AppSidebar({
     setCurrentWorkspace 
   } = useWorkspaceStore()
 
+  console.log(workspaceData, 'workspaceData');
+
   React.useEffect(() => {
     fetchWorkspaces()
   }, [fetchWorkspaces])
 
   React.useEffect(() => {
-    if (workspaceId && workspaces.length > 0) {
-      const matchingWorkspace = workspaces.find(w => w.workspaces.id === workspaceId)
+    if (workspaceId && workspaceData.length > 0) {
+      const matchingWorkspace = workspaceData.find(w => w.workspaces.id === workspaceId)
       if (matchingWorkspace) {
-        setCurrentWorkspace(matchingWorkspace.workspaces)
+        console.log(matchingWorkspace, 'matchingWorkspace');
+        setCurrentWorkspace(matchingWorkspace)
       }
     }
-  }, [workspaceId, workspaces, setCurrentWorkspace])
+  }, [workspaceId, workspaceData, setCurrentWorkspace])
  
   return (
     <Sidebar className="w-64 flex-shrink-0">
@@ -65,16 +68,16 @@ export default function AppSidebar({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg" className="w-full justify-between">
-                  {currentWorkspace?.name || 'No Workspace Selected'}
+                  {currentWorkspace?.workspaces?.name || 'No Workspace Selected'}
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {workspaces.length > 0 ? (
+                {workspaceData?.length > 0 ? (
                   <React.Fragment>
-                    {workspaces.map((workspace) => (
+                    {workspaceData.map((workspace) => (
                       <DropdownMenuItem key={workspace.workspaces.id} className="text-black">
                         {workspace.workspaces.name}
                       </DropdownMenuItem>

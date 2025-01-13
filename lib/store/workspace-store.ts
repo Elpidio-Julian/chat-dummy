@@ -1,31 +1,46 @@
 import { create } from 'zustand'
 import { fetchUserWorkspaces } from '@/components/actions/fetchUserWorkspaces'
 
+interface WorkspaceData {
+  workspaces: {
+    id: string;
+    name: string;
+    description: string | null;
+    created_at: string;
+    created_by: string;
+  }
+}
+
 interface Workspace {
-  id: string
-  name: string
+  workspaces: {
+    id: string;
+    name: string;
+    description: string | null;
+    created_at: string;
+    created_by: string;
+  }
 }
 
 interface WorkspaceStore {
-  workspaces: Workspace[]
-  currentWorkspace: Workspace
+  workspaceData: WorkspaceData[]
+  currentWorkspace: Workspace | null
   isLoading: boolean
   error: string | null
   fetchWorkspaces: () => Promise<void>
-  setCurrentWorkspace: (workspace: Workspace) => void
+  setCurrentWorkspace: (workspace: WorkspaceData) => void
 }
 
 export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
-  workspaces: [],
+  workspaceData: [],
   currentWorkspace: null,
   isLoading: false,
   error: null,
   fetchWorkspaces: async () => {
     set({ isLoading: true, error: null })
     try {
-      const { workspaces, error } = await fetchUserWorkspaces()
-      if (error) throw new Error(error.message)
-      set({ workspaces, isLoading: false })
+      const { workspaceData, error } = await fetchUserWorkspaces()
+      if (error) throw new Error(error)
+      set({ workspaceData: workspaceData as WorkspaceData[], isLoading: false })
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false })
     }

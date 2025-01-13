@@ -9,7 +9,7 @@ import { createWorkspace } from "@/app/protected/_components/create-workspace";
 import { revalidatePath } from "next/cache";
 import { fetchUserWorkspaces } from "@/components/actions/fetchUserWorkspaces";
 
-export default async function WorkspaceLayout({ params }: { params: { workspaceId: string } }) {
+export default async function WorkspaceLayout() {
   const supabase = await createClient();
 
   // Get current user
