@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -9,11 +10,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown, LogOut, User } from 'lucide-react'
 import { signOutAction } from "@/app/actions";
+import { useWorkspaceStore } from '@/lib/store/workspace-store'
 
 export default function Header({ name = "Workspace Name" }: { name?: string }) { 
+  const { currentWorkspace } = useWorkspaceStore()
+  
   return (
     <header className="flex items-center justify-between border-b px-6 py-2">
-      <h1 className="text-lg font-semibold">{name}</h1>
+      <h1 className="text-lg font-semibold">{currentWorkspace?.name || 'No workspace selected'}</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 rounded-full">

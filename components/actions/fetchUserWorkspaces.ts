@@ -3,7 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export async function fetchUserWorkspacesIds() {
+export async function fetchUserWorkspaces() {
   try {
     const supabase = await createClient();
     const {
@@ -18,15 +18,22 @@ export async function fetchUserWorkspacesIds() {
     .from('workspace_members')
     .select('workspace_id')
     .eq('user_id', user.id)
+    .select(`
+      workspaces (
+        id,
+        name,
+        description,
+        created_at,
+        created_by
+      )
+    `)
 
     if (workspacesError) {
       return { error: workspacesError.message, workspaces: [] };
     }
-    const workspacesData = workspaces?.map((item) => ({
-      id: item.workspace_id,
-    })) || [];
 
-    return { error: null, workspaces: workspacesData };
+
+    return { error: null, workspaces };
   } catch (err: any) {
     return { error: err.message || 'Unexpected error', workspaces: [] };
   }

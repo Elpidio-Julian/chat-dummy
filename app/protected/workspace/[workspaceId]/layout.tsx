@@ -9,8 +9,7 @@ import { createWorkspace } from "@/app/protected/_components/create-workspace";
 import { revalidatePath } from "next/cache";
 import { fetchUserWorkspaces } from "@/components/actions/fetchUserWorkspaces";
 
-
-export default async function WorkspacePage() {
+export default async function WorkspaceLayout({ params }: { params: { workspaceId: string } }) {
   const supabase = await createClient();
 
   // Get current user
@@ -20,42 +19,15 @@ export default async function WorkspacePage() {
     redirect('/sign-in');
   }
 
-  // Check if user has any workspaces
-  const { data: workspaces, error: workspacesError } = await fetchUserWorkspaces();
   
-  if (workspacesError) {
-    return (
-      <>
+   
+
+  return (
+    <>
       <AppSidebar  />
       <div className="flex flex-1 overflow-hidden">
         <SidebarInset>
-          <Header name="No Workspace yet" />
-          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
-            <h1 className="text-2xl font-bold">Welcome to Chat Dummy!</h1>
-            <p className="text-muted-foreground text-center max-w-md">
-        You don't have any workspaces yet. Create your first workspace to get started.
-            </p>
-            <CreateWorkspaceDialog />
-         </div>    
-        </SidebarInset>
-      </div>
-    </>
-    );
-  }
-
-  // If user has a workspace, redirect to the first one
-  if (workspaces && workspaces.length > 0) {
-
-    redirect(`/protected/workspace/${workspaces[0].workspace_id}`);
-  }
-
-  // If no workspaces, show create workspace UI
-  return (
-    <>
-      <AppSidebar />
-      <div className="flex flex-1 overflow-hidden">
-        <SidebarInset>
-          <Header name="No Workspace yet" />
+          <Header />
           <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
             <h1 className="text-2xl font-bold">Welcome to Chat Dummy!</h1>
             <p className="text-muted-foreground text-center max-w-md">

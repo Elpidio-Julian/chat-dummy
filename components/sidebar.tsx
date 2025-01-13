@@ -1,5 +1,5 @@
 'use client'
-
+import { useParams } from 'next/navigation'
 import * as React from 'react'
 import { Button } from "@/components/ui/button"
 import {
@@ -22,31 +22,50 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
-import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
+import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog"
+import { useWorkspaceStore } from '@/lib/store/workspace-store'
 
 export default function AppSidebar({
-  workspaces = [],
-  currentWorkspace = { id: '', name: 'No Workspace Selected' },
   channels = [],
   directMessages = [],
 }: {
-  workspaces?: { id: string, name: string }[];
-  currentWorkspace?: { id: string, name: string };
   channels?: { id: string, name: string }[];
   directMessages?: { id: string, name: string }[];
 }) {
+  const params = useParams()
+  const workspaceId = params?.workspaceId as string
+  
+  const { 
+    workspaces, 
+    currentWorkspace, 
+    isLoading,
+    error,
+    fetchWorkspaces, 
+    setCurrentWorkspace 
+  } = useWorkspaceStore()
 
+  React.useEffect(() => {
+    fetchWorkspaces()
+  }, [fetchWorkspaces])
 
-
+  React.useEffect(() => {
+    if (workspaceId && workspaces.length > 0) {
+      const matchingWorkspace = workspaces.find(w => w.workspaces.id === workspaceId)
+      if (matchingWorkspace) {
+        setCurrentWorkspace(matchingWorkspace.workspaces)
+      }
+    }
+  }, [workspaceId, workspaces, setCurrentWorkspace])
+ 
   return (
-    <Sidebar  className="w-64 flex-shrink-0">
+    <Sidebar className="w-64 flex-shrink-0">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg" className="w-full justify-between">
-                  {currentWorkspace.name}
+                  {currentWorkspace?.name || 'No Workspace Selected'}
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -54,17 +73,17 @@ export default function AppSidebar({
                 <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {workspaces.length > 0 ? (
-                  <>
+                  <React.Fragment>
                     {workspaces.map((workspace) => (
-                      <DropdownMenuItem key={workspace.id}>
-                        {workspace.name}
+                      <DropdownMenuItem key={workspace.workspaces.id} className="text-black">
+                        {workspace.workspaces.name}
                       </DropdownMenuItem>
                     ))}
                     <DropdownMenuSeparator />
-                  </>
+                  </React.Fragment>
                 ) : (
                   <DropdownMenuItem disabled>
-                    No workspaces available
+                    {isLoading ? 'Loading...' : error || 'No workspaces available'}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
