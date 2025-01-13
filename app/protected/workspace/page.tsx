@@ -23,20 +23,13 @@ export default async function WorkspacePage() {
 
   // If no workspaces, show create workspace UI
   return (
-    <>
-      <AppSidebar />
-      <div className="flex flex-1 overflow-hidden">
-        <SidebarInset>
-          <Header name="No Workspace yet" />
-          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
+          <>
+          
             <h1 className="text-2xl font-bold">Welcome to Chat Dummy!</h1>
             <p className="text-muted-foreground text-center max-w-md">
         You don't have any workspaces yet. Create your first workspace to get started.
             </p>
             <CreateWorkspaceDialog />
-         </div>    
-        </SidebarInset>
-      </div>
-    </>
+          </>
   );
 }

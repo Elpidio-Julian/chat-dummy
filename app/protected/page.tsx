@@ -1,12 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
-import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-import Header from "@/components/header";
+
 export default async function ProtectedPage() {
   const supabase = await createClient();
-
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
   if (!user) {
