@@ -10,8 +10,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Chat Dummy - Sign In",
-  description: "Root layout without sidebar",
+  title: "Chat Dummy",
+  description: "A real-time chat application, built with Supabase, Next.js, and Tailwind CSS.",
 };
 
 const geistSans = Geist({
