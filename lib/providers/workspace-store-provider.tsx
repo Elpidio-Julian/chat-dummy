@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, createContext, useRef, useContext } from 'react'
+import React, { createContext, useRef, useContext, type ReactNode } from 'react'
 import { useStore } from 'zustand'
 
 import { type WorkspaceStore, createWorkspaceStore, } from '@/lib/stores/workspace-store'
@@ -11,14 +11,14 @@ export const WorkspaceStoreContext = createContext<WorkspaceStoreApi | undefined
   undefined
 )
 
-export const WorkspaceStoreProviderProps = {
+export interface WorkspaceStoreProviderProps {
   children: ReactNode
 }
 
 export const WorkspaceStoreProvider = ({ 
   children 
 }: WorkspaceStoreProviderProps) => {
-  const storeRef = useRef<WorkspaceStoreApi>()
+  const storeRef = useRef<WorkspaceStoreApi>(null)
   if (!storeRef.current) {
     storeRef.current = createWorkspaceStore()
   }

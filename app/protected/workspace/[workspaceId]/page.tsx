@@ -14,12 +14,14 @@ export default async function WorkspacePage({ params }: { params: Promise<{ work
   }
   
 
-  const { channels, error: ChannelError } = await getWorkspaceChannels(workspaceId);
-
-  if (ChannelError) {
+  const { data: channels , error: ChannelError } = await getWorkspaceChannels(workspaceId);
+  
+  if (ChannelError || !channels || channels.length === 0) {
     console.log(ChannelError);
     redirect('/protected/workspace');
   } 
+
+  const channelId = channels[0].id;
   // Redirect to first channel
-  redirect(`/protected/workspace/${workspaceId}/channels/${channels[0].id}`);
+  redirect(`/protected/workspace/${workspaceId}/channels/${channelId}`);
 }

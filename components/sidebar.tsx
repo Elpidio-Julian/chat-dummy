@@ -26,13 +26,14 @@ import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog"
 import { useWorkspaceStore } from '@/lib/providers/workspace-store-provider'
 import { useRouter } from 'next/navigation';
+import { Channel, Workspace, WorkspaceData } from '@/lib/stores/workspace-store';
 
 export default function AppSidebar({
   directMessages = [],
-  channels = [],
+  channels = {} as Channel,
 }: {
   directMessages?: { id: string, name: string }[];
-  channels?: { id: string, name: string }[];
+  channels?: Channel;
 }) {
   const params = useParams()
   const workspaceId = params?.workspaceId as string
@@ -50,27 +51,18 @@ export default function AppSidebar({
   React.useEffect(() => {
     fetchWorkspaces()
   }, [fetchWorkspaces])
-  console.log(channels, 'channels');
-  React.useEffect(() => {
-    console.log(JSON.stringify(currentWorkspace), 'currentWorkspace - sidebar');
-    if (workspaceId && workspaces?.length > 0) {
-      const matchingWorkspace = workspaces.find(w => w.workspaces.id === workspaceId)
-      if (matchingWorkspace) {
-        console.log(matchingWorkspace, 'matchingWorkspace');
-        setCurrentWorkspace(matchingWorkspace)
-      }
-    }
-  }, [workspaceId, workspaces, setCurrentWorkspace])
  
   async function handleChannelChange(channel: Channel) {
-    router.push(`/protected/workspace/${channel.workspace_id}/channels/${channel.id}`);
+    router.push(`/protected/workspace/${workspaceId}/channels/${channel.id}`);
   }
 
-  async function handleWorkspaceChange(workspace: Workspace) {
-    setCurrentWorkspace(workspace)
+  async function handleWorkspaceChange(workspace: WorkspaceData) {
+    const newWorkspace: Workspace = {
+      workspaces: workspace.workspaces
+    }
+    setCurrentWorkspace(newWorkspace)
     router.push(`/protected/workspace/${workspace.workspaces.id}`);
   }
-
 
   return (
     <Sidebar className="w-64 flex-shrink-0">

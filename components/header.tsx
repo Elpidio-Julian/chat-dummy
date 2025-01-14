@@ -12,12 +12,21 @@ import { ChevronDown, LogOut, User } from 'lucide-react'
 import { signOutAction } from "@/app/actions";
 import { useWorkspaceStore } from '@/lib/providers/workspace-store-provider'
 
-export default function Header({ name = "Workspace Name" }: { name?: string }) { 
+export default function Header() { 
   const { currentWorkspace } = useWorkspaceStore((state) => state)
-  
+  type WorkspaceData = {
+    workspaces: {
+      id: string;
+      name: string;
+      description: string;
+      created_at: string;
+      created_by: string;
+    }
+  }
+  const workspaceData = currentWorkspace as unknown as WorkspaceData;
   return (
     <header className="flex items-center justify-between border-b px-6 py-2">
-      <h1 className="text-lg font-semibold">{currentWorkspace?.workspaces?.name || 'No workspace selected'}</h1>
+      <h1 className="text-lg font-semibold">{workspaceData?.workspaces.name || 'No workspace selected'}</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 rounded-full">

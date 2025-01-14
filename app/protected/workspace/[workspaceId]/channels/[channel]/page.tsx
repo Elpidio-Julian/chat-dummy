@@ -6,6 +6,8 @@ import ChatView from "@/components/chat-view";
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from "@/components/sidebar";
 import Header from "@/components/header";
+import { Channel } from "@/lib/stores/workspace-store";
+
 
 export default async function ChannelPage({ params }: { params: Promise<{ workspaceId: string, channel: string }> }) {
 
@@ -37,10 +39,10 @@ export default async function ChannelPage({ params }: { params: Promise<{ worksp
   return (
 
     <SidebarProvider >
-      <AppSidebar channels={channelData}/>
+      <AppSidebar channels={channelData as unknown as Channel}/>
       <div className="flex flex-1 overflow-hidden">
       <SidebarInset>
-       <Header name="No Workspace yet" />
+       <Header />
        <ChatView />
         
       </SidebarInset>
