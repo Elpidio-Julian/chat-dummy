@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { WorkspaceStoreProvider } from '@/lib/providers/workspace-store-provider'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from "@/components/sidebar";
 import Header from "@/components/header";
@@ -12,17 +12,8 @@ export default async function WorkspaceLayout({
  
 
   return (
-    <SidebarProvider >
-      <AppSidebar />
-      <div className="flex flex-1 overflow-hidden">
-      <SidebarInset>
-       <Header name="No Workspace yet" />
-       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
+    <WorkspaceStoreProvider>
       {children}
-    </div>
-        
-      </SidebarInset>
-      </div>
-    </SidebarProvider>
+    </WorkspaceStoreProvider>
   );
 }

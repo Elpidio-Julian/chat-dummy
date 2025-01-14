@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 import { validateWorkspaceMembership } from './validate-workspace-membership';
 
 export async function getWorkspaceChannels(workspaceId: string) {
+  console.log(workspaceId, 'workspaceId');
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -31,7 +32,7 @@ export async function getWorkspaceChannels(workspaceId: string) {
       return { error: channelsError.message, channels: [] };
     }
 
-    return { error: null, channels: channels || [] };
+    return { error: null, data: channels || [] };
   } catch (err: any) {
     return { error: err.message || 'Unexpected error', channels: [] };
   }

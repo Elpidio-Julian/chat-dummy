@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import MessageInput from "@/app/protected/_components/message-input";
 import MessagesList from "@/app/protected/_components/messages-list";
 import ChatView from "@/components/chat-view";
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import AppSidebar from "@/components/sidebar";
+import Header from "@/components/header";
 
 export default async function ChannelPage({ params }: { params: Promise<{ workspaceId: string, channel: string }> }) {
 
@@ -32,6 +35,17 @@ export default async function ChannelPage({ params }: { params: Promise<{ worksp
   }
 
   return (
-    <ChatView />
+
+    <SidebarProvider >
+      <AppSidebar channels={channelData}/>
+      <div className="flex flex-1 overflow-hidden">
+      <SidebarInset>
+       <Header name="No Workspace yet" />
+       <ChatView />
+        
+      </SidebarInset>
+      </div>
+    </SidebarProvider>
+    
   );
 }

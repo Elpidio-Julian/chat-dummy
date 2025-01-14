@@ -1,4 +1,5 @@
 'use client'
+
 import { useParams } from 'next/navigation'
 import * as React from 'react'
 import { Button } from "@/components/ui/button"
@@ -23,43 +24,54 @@ import {
 } from "@/components/ui/sidebar"
 import { ChevronDown, Hash, MessageSquare, Plus } from 'lucide-react'
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog"
-import { useWorkspaceStore } from '@/lib/store/workspace-store'
+import { useWorkspaceStore } from '@/lib/providers/workspace-store-provider'
+import { useRouter } from 'next/navigation';
 
 export default function AppSidebar({
-  channels = [],
   directMessages = [],
+  channels = [],
 }: {
-  channels?: { id: string, name: string }[];
   directMessages?: { id: string, name: string }[];
+  channels?: { id: string, name: string }[];
 }) {
   const params = useParams()
   const workspaceId = params?.workspaceId as string
-  
+  const router = useRouter()
   const { 
-    workspaceData, 
+    workspaces, 
     currentWorkspace, 
     isLoading,
     error,
     fetchWorkspaces, 
-    setCurrentWorkspace 
-  } = useWorkspaceStore()
+    setCurrentWorkspace,
+  } = useWorkspaceStore((state) => state)
 
-  console.log(workspaceData, 'workspaceData');
-
+  
   React.useEffect(() => {
     fetchWorkspaces()
   }, [fetchWorkspaces])
-
+  console.log(channels, 'channels');
   React.useEffect(() => {
-    if (workspaceId && workspaceData.length > 0) {
-      const matchingWorkspace = workspaceData.find(w => w.workspaces.id === workspaceId)
+    console.log(JSON.stringify(currentWorkspace), 'currentWorkspace - sidebar');
+    if (workspaceId && workspaces?.length > 0) {
+      const matchingWorkspace = workspaces.find(w => w.workspaces.id === workspaceId)
       if (matchingWorkspace) {
         console.log(matchingWorkspace, 'matchingWorkspace');
         setCurrentWorkspace(matchingWorkspace)
       }
     }
-  }, [workspaceId, workspaceData, setCurrentWorkspace])
+  }, [workspaceId, workspaces, setCurrentWorkspace])
  
+  async function handleChannelChange(channel: Channel) {
+    router.push(`/protected/workspace/${channel.workspace_id}/channels/${channel.id}`);
+  }
+
+  async function handleWorkspaceChange(workspace: Workspace) {
+    setCurrentWorkspace(workspace)
+    router.push(`/protected/workspace/${workspace.workspaces.id}`);
+  }
+
+
   return (
     <Sidebar className="w-64 flex-shrink-0">
       <SidebarHeader>
@@ -75,10 +87,10 @@ export default function AppSidebar({
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {workspaceData?.length > 0 ? (
+                {workspaces?.length > 0 ? (
                   <React.Fragment>
-                    {workspaceData.map((workspace) => (
-                      <DropdownMenuItem key={workspace.workspaces.id} className="text-black">
+                    {workspaces.map((workspace) => (
+                      <DropdownMenuItem key={workspace.workspaces.id} onSelect={() => handleWorkspaceChange(workspace)} className="text-black">
                         {workspace.workspaces.name}
                       </DropdownMenuItem>
                     ))}
@@ -102,15 +114,13 @@ export default function AppSidebar({
           <SidebarGroupLabel>Channels</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {channels.length > 0 ? (
-                channels.map((channel) => (
-                  <SidebarMenuItem key={channel.id}>
+              {channels ? (
+                  <SidebarMenuItem key={channels.id}>
                     <SidebarMenuButton>
                       <Hash className="mr-2 h-4 w-4" />
-                      {channel.name}
+                      {channels.name}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))
               ) : (
                 <SidebarMenuItem>
                   <SidebarMenuButton disabled>

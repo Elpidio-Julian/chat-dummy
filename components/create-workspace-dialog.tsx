@@ -17,17 +17,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { FormMessage, type Message } from './form-message';
+
 import { createWorkspace } from '@/app/protected/_components/create-workspace';
 import { useEffect } from 'react';
+import { useWorkspaceStore } from '@/lib/providers/workspace-store-provider';
+import { useRouter } from 'next/navigation';
 
 export function CreateWorkspaceDialog() {
   const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [message, setMessage] = useState<Message | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
+  const { setCurrentWorkspace, currentWorkspace, isLoading} = useWorkspaceStore((state) => state);
   const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function getUser() {
@@ -39,22 +42,23 @@ export function CreateWorkspaceDialog() {
       setUser(user);
     }
     getUser();
-  }, [supabase.auth]);
+  }, [supabase.auth, setCurrentWorkspace]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setIsLoading(true);
     setMessage(null);
-
     try {
-      await createWorkspace(name, user);
+      const workspace = await createWorkspace(name, user);
+      setCurrentWorkspace(workspace.workspaces);
+      console.log(JSON.stringify(workspace.workspaces), 'workspace');
+      router.push(`/protected/workspace/${workspace.workspaces.id}`);
       setOpen(false);
       setName('');
+
     } catch (error) {
+      console.log(error, 'error');
       setMessage({ error: 'Failed to create workspace' });
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   }
 
   return (

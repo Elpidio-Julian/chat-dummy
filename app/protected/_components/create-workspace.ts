@@ -1,8 +1,7 @@
 'use server'
 
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+
 
 interface User {
   id: string;
@@ -32,7 +31,6 @@ export async function createWorkspace(name: string, user: User) {
     throw new Error(`Failed to create workspace: ${workspaceError.message}`);
   }
 
-  revalidatePath(`/protected/workspace/${workspace.id}`);
-  redirect(`/protected/workspace/${workspace.id}`);
-  return workspace;
+
+  return {workspaces: workspace}
 }

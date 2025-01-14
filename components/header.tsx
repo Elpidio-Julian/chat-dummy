@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown, LogOut, User } from 'lucide-react'
 import { signOutAction } from "@/app/actions";
-import { useWorkspaceStore } from '@/lib/store/workspace-store'
+import { useWorkspaceStore } from '@/lib/providers/workspace-store-provider'
 
 export default function Header({ name = "Workspace Name" }: { name?: string }) { 
-  const { currentWorkspace } = useWorkspaceStore()
+  const { currentWorkspace } = useWorkspaceStore((state) => state)
   
   return (
     <header className="flex items-center justify-between border-b px-6 py-2">
